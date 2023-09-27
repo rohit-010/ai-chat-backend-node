@@ -34,6 +34,10 @@ app.get('/callapi', async (req, res) => {
   return res.json(apiResponse);
 });
 
+app.get('/health', async (req, res) => {
+  return res.json({ Health: 'UP' });
+});
+
 app.get('/callhugapi', async (req, res) => {
   const apiResponse = await huggingCall();
   // Store messages
