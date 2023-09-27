@@ -82,7 +82,7 @@ app.post('/text-to-audio', async (req, res) => {
   return res.json(speechResponse);
 });
 
-function limitString(string = '', limit = 205) {
+function limitString(string = '', limit = 305) {
   return string.substring(0, limit);
 }
 
