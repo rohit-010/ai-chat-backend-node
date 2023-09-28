@@ -91,16 +91,23 @@ app.post('/post-audio', upload.single('file'), async (req, res) => {
   console.log('FE call');
   const audioFile = req.file;
   const chatResponse = await audioToText(audioFile);
+  let bardResponse;
   if (!chatResponse) {
     console.error('No chat response audio to text error');
+    bardResponse =
+      'Sorry Not able to understand at the moment, please check backend';
+  }
+  // still no bard response means we got response from hugging face
+  if (!bardResponse && chatResponse?.text) {
+    bardResponse = await openApiCall(chatResponse.text);
   }
 
-  let bardResponse = await openApiCall(chatResponse.text);
-
   console.log('BARD RESPONSE IS:', bardResponse);
+
   if (!bardResponse) {
-    console.error('No  response from BARD APi ');
-    bardResponse = 'Sorry Not able to process request, please check settings';
+    console.error('No  response from BARD API ');
+    bardResponse =
+      'Sorry Not able to get response from AI, please check settings';
   }
   bardResponse = limitString(bardResponse);
   console.log('BARD RESPONSE after limit:', bardResponse);
@@ -108,21 +115,13 @@ app.post('/post-audio', upload.single('file'), async (req, res) => {
   await storeMessages(chatResponse.text, bardResponse);
   const audioDataBuffer = await textToAudio(bardResponse);
   console.log('audioDataURI', audioDataBuffer);
-  // const audioBuffer = Buffer.from(response.data, 'binary');
+
   const base64Audio = audioDataBuffer.toString('base64');
   const audioDataURI = `data:audio/mpeg;base64,${base64Audio}`;
-  // return audioDataURI;
 
-  // const streamResponse = new Response(speechResponseBuffer);
-
-  // const stream = new Readable();
-  // stream.push(speechResponseBuffer);
-  // stream.push(null);
-  // stream.pipe(createWriteStream(`generated.mp3`));
   res.set('Content-Type', 'application/octet-stream');
   res.write(audioDataBuffer);
-  // const writeStream = WritableStream.getWriter();
-  // res.send({ data: base64Audio });
+
   res.end();
   // const data = "Using streams to write data.";
 
