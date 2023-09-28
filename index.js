@@ -112,7 +112,10 @@ app.post('/post-audio', upload.single('file'), async (req, res) => {
   bardResponse = limitString(bardResponse);
   console.log('BARD RESPONSE after limit:', bardResponse);
   // Store messages
-  await storeMessages(chatResponse.text, bardResponse);
+  if (chatResponse?.text && bardResponse) {
+    await storeMessages(chatResponse.text, bardResponse);
+  }
+
   const audioDataBuffer = await textToAudio(bardResponse);
   console.log('audioDataURI', audioDataBuffer);
 
