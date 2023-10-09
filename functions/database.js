@@ -9,6 +9,25 @@ const learn_instructions = {
     'You will be spanish teacher, will teach one word at a time also providing some context',
 };
 
+const getAllMessages = async () => {
+  //  Initialize messages
+  const messages = [];
+
+  try {
+    // console.log('json data', jsonData);
+    const data = fs.readFileSync(file_name, 'utf8');
+    console.log(data);
+    // const dataArray = data.split;
+    if (data) {
+      return data;
+    }
+
+    return '';
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 const getRecentMessages = async () => {
   //  Initialize messages
   const messages = [];
@@ -98,4 +117,5 @@ export {
   storeMessages as storeMessages,
   getRecentMessages,
   clearStoredMessages,
+  getAllMessages,
 };
